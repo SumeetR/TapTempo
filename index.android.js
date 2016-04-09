@@ -43,8 +43,11 @@ class TapTempo extends Component {
       for (const index in lastFourSamples) {
         total = total + lastFourSamples[index];
       }
+      // Calculate average
+      const average = total / 4
+
       // Divide by milliseconds in a minute
-      return Math.round(60000 / (total / 4));
+      return Math.round(60000 / average);
     }
     return 0;
   } 
@@ -73,7 +76,7 @@ class TapTempo extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F5FCFF',
   },
   center: {
     flex: 1,
@@ -87,7 +90,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   tempo: {
-    fontSize: 24,
+    fontSize: 48,
   },
   welcome: {
     fontSize: 24,
