@@ -1,6 +1,6 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Tap Tempo React Native App
+ * https://github.com/SumeetR/TapTempo
  */
 
 import React, {
@@ -8,22 +8,63 @@ import React, {
   Component,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View
 } from 'react-native';
 
 class TapTempo extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      samples: []
+    };
+  }
+
+  // Push sample into samples array
+  onPressButton = () => {
+    const { samples } = this.state;
+    samples.push(new Date().getTime());
+    this.setState({samples: samples});
+  }
+
+
+  calculateTempo = (samples) => {
+    // Only start processing when at least 5 samples are available
+    if (samples.length >= 5) {
+      // Take last 5 samples, subtract from first sample, and then return array of last 4 samples
+      const lastFourSamples = samples.slice(-5).map((sample, index, array) => {
+        if (index > 0) {
+          return sample - array[index - 1];
+        }
+        return 0;
+      }).slice(-4);
+      // Calculate total time
+      let total = 0;
+      for (const index in lastFourSamples) {
+        total = total + lastFourSamples[index];
+      }
+      // Divide by milliseconds in a minute
+      return Math.round(60000 / (total / 4));
+    }
+    return 0;
+  } 
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Welcome to Tap Tempo!
+          TapTempo
         </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
+        <View style={styles.center}>
+          <Text style={styles.instructions}>
+            Tap the button to the beat!
+          </Text>
+          <Text style={styles.tempo}>
+            {this.calculateTempo(this.state.samples)}
+          </Text>
+          <TouchableOpacity style={styles.tap} onPress={this.onPressButton}>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -32,12 +73,25 @@ class TapTempo extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
+  },
+  center: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+  },
+  tap: {
+    backgroundColor: 'red',
+    height: 100,
+    width: 100,
+    borderRadius: 100,
+  },
+  tempo: {
+    fontSize: 24,
   },
   welcome: {
-    fontSize: 20,
+    fontSize: 24,
+    fontWeight: 'bold',
     textAlign: 'center',
     margin: 10,
   },
